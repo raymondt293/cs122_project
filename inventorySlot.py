@@ -7,7 +7,7 @@ class InventorySlot:
         self.rect.topleft = pos
         self.count = 0
 
-        self.font = pygame.font.Font("Fonts/Optima.ttc", 25)
+        self.font = pygame.font.Font("images/Optima.ttc", 25)
 
     def render(self, display):
         text = self.font.render(str(self.count), True, (0, 0, 0))
