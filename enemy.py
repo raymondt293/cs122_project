@@ -50,10 +50,10 @@ class Enemy(pygame.sprite.Sprite):
                     self.rect.y = hit.rect.top - self.rect.height
                     self.vel.y = 0
 
-    def player_collision(self, player, itemGroup):
+    def player_collision(self, player, projectiles, itemGroup):
         if self.rect.colliderect(player.rect):
             player.player_hit(1)    # Player took damage
-        elif self.rect.colliderect(player.attack_range):
+        elif self.rect.colliderect(player.attack_range) or pygame.sprite.spritecollideany(self,projectiles):
             self.kill()     # Mob hit by user
 
             probability = numpy.random.uniform(1, 100)
@@ -63,16 +63,12 @@ class Enemy(pygame.sprite.Sprite):
             elif probability >= 11 and probability <= 50:
                 item = Item(self.pos.x, self.pos.y, "health", "images/healthbar/ui_heart_full.png")
                 itemGroup.add(item)
-
             
     def render(self, display):
         pygame.draw.rect(display, (0,0,255), self.rect)
         display.blit(self.image, self.pos)
 
-    def update(self, groundGroup, player, itemGroup):
+    def update(self, groundGroup, player, projectiles, itemGroup):
         self.move()
         self.collision(groundGroup)
-        self.player_collision(player, itemGroup)
-        
-
-
+        self.player_collision(player, projectiles, itemGroup)
