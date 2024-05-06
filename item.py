@@ -19,7 +19,7 @@ class Item(pygame.sprite.Sprite):
             if self.itemType == "health":
                 player.healthBar.heal(1)
             elif self.itemType == "coin":
-                pass
+                player.coins+=1
             self.kill()
 
     def render(self, display):
