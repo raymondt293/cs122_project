@@ -9,7 +9,7 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        self.image = pygame.image.load("images/mob_snail/tile000.png")
+        self.image = pygame.image.load("images/mob_snail_left/tile000.png")
         self.rect = self.image.get_rect()
 
         self.pos = vec(random.randint(0,800),0)
