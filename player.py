@@ -1,6 +1,7 @@
 import pygame
 from pygame.locals import *
 from healthbar import HealthBar
+from fireball import Fireball
 
 vec = pygame.math.Vector2
 
@@ -15,6 +16,9 @@ class Player(pygame.sprite.Sprite):
         self.acc = vec(0,0)
         self.vel = vec(0,0)
         self.healthBar = HealthBar(10, 10)
+        self.coin=10
+        self.maxCoin=100
+        self.coins=3
 
         # Player constants
         self.ACC = 0.4
@@ -150,6 +154,8 @@ class Player(pygame.sprite.Sprite):
         pygame.draw.rect(display, (0,255,0), self.attack_range)
         display.blit(self.image, self.pos)
 
+        pygame.draw.rect(display,(255,0,0), pygame.Rect(self.pos.x, self.rect.y - 30, 100*(self.coin/self.maxCoin), 15))
+
         # Create a surface slightly larger than the character image
         border_surface = pygame.Surface((self.image.get_width() + 4, self.image.get_height() + 4), pygame.SRCALPHA)
         
@@ -206,7 +212,19 @@ class Player(pygame.sprite.Sprite):
             self.hit_cooldown = True
             self.healthBar.takeDamage(damage)
             pygame.time.set_timer(self.hit_cooldown_event, 1000)
-
-
-
-
+    
+    def fireball(self,group):
+        if self.coin >=10:
+            fireball=Fireball(self)
+            group.add(fireball)
+            self.coin -= 10
+    
+    def useCoin(self):
+        if self.coin == self.maxCoin:
+           return
+        if self.coins >= 2:
+            self.coins -= 2
+            if self.coin+50 > self.maxCoin:
+                self.coin=self.maxCoin
+            else:
+                self.coin+=50
