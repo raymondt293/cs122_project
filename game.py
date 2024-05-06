@@ -1,10 +1,12 @@
 import pygame
 from pygame.locals import *
 import sys
+import random
 
 from ground import Ground
 from player import Player
 from enemy import Enemy
+from secondEnemy import SecondEnemy
 from userInterface import UserInterface
 from levelManager import LevelManager
 
@@ -30,6 +32,9 @@ user_interface = UserInterface(player)
 
 itemGroup = pygame.sprite.Group()
 projectiles=pygame.sprite.Group()
+enemyProjectiles=pygame.sprite.Group()
+playerGroup=pygame.sprite.Group()
+playerGroup.add(player)
 
 levelManager = LevelManager()
 
@@ -42,9 +47,15 @@ while True:
             player.hit_cooldown = False
             pygame.time.set_timer(player.hit_cooldown_event, 0)
         if event.type == levelManager.enemy_generation:
-            enemy = Enemy()
+            choice = random.randint(0, 1)
+            enemy = None
+            if choice == 0:
+                enemy = Enemy()
+            elif choice == 1:
+                enemy = SecondEnemy(enemyProjectiles)
             levelManager.enemyGroup.add(enemy)
             levelManager.generatedEnemies += 1
+
         if event.type == KEYDOWN:
             if event.key == K_SPACE:
                 player.jump()
@@ -70,7 +81,7 @@ while True:
     # Update functions
     for enemy in levelManager.enemyGroup:
         enemy.update(levelManager.levels[levelManager.getLevel()].groundData, player, projectiles, itemGroup)
-    player.update(levelManager.levels[levelManager.getLevel()].groundData)
+    player.update(levelManager.levels[levelManager.getLevel()].groundData, enemyProjectiles)
     user_interface.update(CLOCK.get_fps())
 
     levelManager.update()
@@ -94,6 +105,10 @@ while True:
     for projectile in projectiles:
         projectile.render(display)
         projectile.update(levelManager.enemyGroup)
+
+    for projectile in enemyProjectiles:
+        projectile.render(display)
+        projectile.update(playerGroup)
     
     user_interface.render(display)
 
