@@ -6,6 +6,7 @@ from ground import Ground
 from player import Player
 from enemy import Enemy
 from userInterface import UserInterface
+from levelManager import LevelManager
 
 pygame.init()
 
@@ -23,26 +24,14 @@ background_back = pygame.transform.scale(background_back, (WIDTH, HEIGHT))
 background_forest = pygame.image.load("images/country-platform-forest.png")
 background_forest = pygame.transform.scale(background_forest, (WIDTH, HEIGHT))
 
-user_interface = UserInterface()
-
-groundGroup = pygame.sprite.Group()
-ground = Ground(900, 120, -20, 360, color=(64,169,134))
-ground1 = Ground(100, 20, 200, 230, image="images/Ground.png")
-ground2 = Ground(120, 20, 100, 180, image="images/Ground.png")
-ground3 = Ground(80, 20, 500, 130, image="images/Ground.png")
-groundGroup.add(ground)
-groundGroup.add(ground1)
-groundGroup.add(ground2)
-groundGroup.add(ground3)
-
-
 player = Player(200, 200)
+user_interface = UserInterface(player)
 #player.load_animations()
 
-enemyGroup = pygame.sprite.Group()
-enemy_generation = pygame.USEREVENT + 2
-
 itemGroup = pygame.sprite.Group()
+projectiles=pygame.sprite.Group()
+
+levelManager = LevelManager()
 
 while True:
     for event in pygame.event.get():
@@ -52,36 +41,45 @@ while True:
         if event.type == player.hit_cooldown_event:
             player.hit_cooldown = False
             pygame.time.set_timer(player.hit_cooldown_event, 0)
-        if event.type == enemy_generation:
+        if event.type == levelManager.enemy_generation:
             enemy = Enemy()
-            enemyGroup.add(enemy)
+            levelManager.enemyGroup.add(enemy)
+            levelManager.generatedEnemies += 1
         if event.type == KEYDOWN:
             if event.key == K_SPACE:
                 player.jump()
             if event.key == K_z:
                 player.attacking = True
                 player.attack()
-            if event.key == K_q:
-                pygame.time.set_timer(enemy_generation, 2000)
-            if event.key == K_w:
-                pygame.time.set_timer(enemy_generation, 0)
+            if event.key == K_1:
+                levelManager.changeLevel(1)
+            if event.key == K_2:
+                levelManager.changeLevel(2)
+            if event.key == K_3:
+                levelManager.changeLevel(3)
+            if event.key == K_h:
+                user_interface.toggleInventory()
+            if event.key == K_f:
+                player.fireball(projectiles)
+            if event.key == K_c:
+                player.useCoin()
         if event.type == KEYUP:
             if event.key == K_SPACE:
                 player.jump_cancel()
 
-
-
     # Update functions
-    for enemy in enemyGroup:
-        enemy.update(groundGroup, player, itemGroup)
-    player.update(groundGroup)
+    for enemy in levelManager.enemyGroup:
+        enemy.update(levelManager.levels[levelManager.getLevel()].groundData, player, projectiles, itemGroup)
+    player.update(levelManager.levels[levelManager.getLevel()].groundData)
     user_interface.update(CLOCK.get_fps())
+
+    levelManager.update()
 
     # Render
     display.blit(background_back, (0,0))
     display.blit(background_forest, (0,0))
 
-    for ground in groundGroup:
+    for ground in levelManager.levels[levelManager.getLevel()].groundData:
         ground.render(display)
 
     player.render(display)
@@ -90,12 +88,14 @@ while True:
         item.render(display)
         item.update(player)
     
-    for enemy in enemyGroup:
+    for enemy in levelManager.enemyGroup:
         enemy.render(display)
+    
+    for projectile in projectiles:
+        projectile.render(display)
+        projectile.update(levelManager.enemyGroup)
     
     user_interface.render(display)
 
     pygame.display.update()
     CLOCK.tick(FPS)
-
-
