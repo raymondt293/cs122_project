@@ -9,7 +9,7 @@ class Enemy(pygame.sprite.Sprite):
     def __init__(self):
         super().__init__()
 
-        self.image = pygame.image.load("images/mob_snail_left/tile000.png")
+        self.image = pygame.image.load("images/mob_snail/tile000.png")
         self.rect = self.image.get_rect()
 
         self.pos = vec(random.randint(0,800),0)
@@ -49,9 +49,7 @@ class Enemy(pygame.sprite.Sprite):
             self.direction = 0
 
         self.rect.topleft = self.pos
-
-
-
+    
     def update_image_frame(self):
         if self.move_frame > 7:
             self.move_frame = 0
@@ -81,27 +79,19 @@ class Enemy(pygame.sprite.Sprite):
         if self.rect.colliderect(player.rect):
             player.player_hit(1)    # Player took damage
         elif self.rect.colliderect(player.attack_range) or pygame.sprite.spritecollideany(self,projectiles):
-            self.is_alive = False
-            self.is_dying = True
+            self.kill()     # Mob hit by user
 
-            coin_probability = 20  
-            health_probability = 30 
-
-            if numpy.random.randint(1, 101) <= coin_probability:
+            probability = numpy.random.uniform(1, 100)
+            if probability >= 1 and probability <= 20:
                 item = Item(self.pos.x, self.pos.y, "coin", "images/coin/coin_anim_f3.png", scale=3)
                 itemGroup.add(item)
-            
-            if numpy.random.randint(1, 101) <= health_probability:
+            elif probability >= 11 and probability <= 50:
                 item = Item(self.pos.x, self.pos.y, "health", "images/healthbar/ui_heart_full.png")
                 itemGroup.add(item)
             
     def render(self, display):
-        if self.is_alive:
-            pygame.draw.rect(display, (0,0,255), self.rect)
-            display.blit(self.image, self.pos)
-        else:
-            if self.is_dying:
-                display.blit(self.image, self.pos)
+        pygame.draw.rect(display, (0,0,255), self.rect)
+        display.blit(self.image, self.pos)
 
     def update(self, groundGroup, player, projectiles, itemGroup):
         if self.is_dying:
