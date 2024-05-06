@@ -8,7 +8,7 @@ vec = pygame.math.Vector2
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
         super().__init__()
-        self.image = pygame.image.load("images/player_idle/tile000.png")
+        self.image = pygame.image.load("images/player_running_right/tile000.png")
         self.rect = pygame.Rect(x, y, 30, 60)
 
         # Player information
@@ -72,12 +72,11 @@ class Player(pygame.sprite.Sprite):
 
         if keys[K_LEFT]:
             self.rect.x -= 10
-
+        
         if not self.jumping and not self.running and not self.attacking:
             print('idle')
             self.image = pygame.image.load("images/player_idle/tile000.png")
             self.rect.topleft = (self.pos.x - (self.image.get_rect().width - self.rect.width) / 2 + self.rect.width + 5, self.pos.y - (self.image.get_rect().height - self.rect.height) + 30)
-
 
     def walking(self):
         if self.move_frame > 7:
@@ -138,12 +137,19 @@ class Player(pygame.sprite.Sprite):
                     self.vel.y = 0
                     self.jumping = False
 
-    def update(self, group):
-        self.move()
-        self.collision(group)
+    def update(self, group, enProjectiles):
         self.attack()
         self.walking()
-    
+        self.move()
+        self.collision(group)
+        self.checkProjectiles(enProjectiles)
+
+    def checkProjectiles(self, group):
+        hits = pygame.sprite.spritecollideany(self, group)
+
+        if hits:
+            self.player_hit(1)
+
     def jump(self):
         if self.jumping == False:
             self.jumping = True
@@ -211,12 +217,10 @@ class Player(pygame.sprite.Sprite):
                           pygame.image.load("images/player_attack_left/tile005.png").convert_alpha(),
                           pygame.image.load("images/player_attack_left/tile006.png").convert_alpha(),
                           pygame.image.load("images/player_attack_left/tile007.png").convert_alpha()]
-        
         self.idle_animation = [pygame.image.load("images/player_idle/tile000.png").convert_alpha(),
                           pygame.image.load("images/player_idle/tile001.png").convert_alpha(),
                           pygame.image.load("images/player_idle/tile002.png").convert_alpha(),
                           pygame.image.load("images/player_idle/tile003.png").convert_alpha()]
-        
         
     def player_hit(self, damage):
         if self.hit_cooldown == False:
@@ -226,7 +230,7 @@ class Player(pygame.sprite.Sprite):
     
     def fireball(self,group):
         if self.coin >=10:
-            fireball=Fireball(self)
+            fireball=Fireball(self.direction, self.rect.center)
             group.add(fireball)
             self.coin -= 10
     
