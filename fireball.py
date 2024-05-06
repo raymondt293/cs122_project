@@ -1,17 +1,17 @@
 import pygame
 
 class Fireball(pygame.sprite.Sprite):
-    def __init__(self, player):
+    def __init__(self, direction, position):
         super().__init__()
         self.image=None
-        self.direction=player.direction
+        self.direction= direction
 
         if self.direction=="RIGHT":
             self.image=pygame.image.load("images/fireball1_R.png")
         elif self.direction=="LEFT":
             self.image=pygame.image.load("images/fireball1_L.png")
         
-        self.rect=self.image.get_rect(center=player.rect.center)
+        self.rect=self.image.get_rect(center=position)
     
     def render(self,display):
         display.blit(self.image,self.rect)
