@@ -19,6 +19,7 @@ class Player(pygame.sprite.Sprite):
         self.coin=10
         self.maxCoin=100
         self.coins=3
+        self.is_alive = True
 
         # Player constants
         self.ACC = 0.4
@@ -140,11 +141,17 @@ class Player(pygame.sprite.Sprite):
                     self.jumping = False
 
     def update(self, group, enProjectiles):
-        self.attack()
-        self.walking()
-        self.move()
-        self.collision(group)
-        self.checkProjectiles(enProjectiles)
+        if(self.healthBar.health <= 0):
+            self.is_alive = False
+            self.healthBar.health = 0
+            self.kill()
+            print('player is dead')
+        else:
+            self.attack()
+            self.walking()
+            self.move()
+            self.collision(group)
+            self.checkProjectiles(enProjectiles)
 
     def checkProjectiles(self, group):
         hits = pygame.sprite.spritecollideany(self, group)

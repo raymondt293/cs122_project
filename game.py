@@ -99,7 +99,8 @@ while True:
     for ground in levelManager.levels[levelManager.getLevel()].groundData:
         ground.render(display)
 
-    player.render(display)
+    if player.is_alive:
+        player.render(display)
 
     for item in itemGroup:
         item.render(display)

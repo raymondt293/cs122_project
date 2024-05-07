@@ -25,8 +25,13 @@ class UserInterface:
     def render(self, display):
         display.blit(self.text, (600, 20))
 
-        if self.inventoryRender==True:
-            self.inventory.render(display)
+        if self.inventoryRender:
+            if self.inventory.playerInfo.is_alive:
+                self.inventory.render(display)
+            else:
+                game_over_text = self.largefont.render("Game Over!", True, self.color_red)
+                display.blit(game_over_text, (330, 150))
+
 
     def toggleInventory(self):
         if self.inventoryRender==True:
