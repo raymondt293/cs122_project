@@ -51,14 +51,21 @@ while True:
             player.hit_cooldown = False
             pygame.time.set_timer(player.hit_cooldown_event, 0)
         if event.type == levelManager.enemy_generation:
-            choice = random.randint(0, 1)
-            enemy = None
-            if choice == 0:
-                enemy = Enemy()
-            elif choice == 1:
-                enemy = SecondEnemy(enemyProjectiles)
-            levelManager.enemyGroup.add(enemy)
-            levelManager.generatedEnemies += 1
+            if levelManager.level == 1:
+                levelManager.enemyGroup.add(Enemy())
+                levelManager.generatedEnemies += 1
+            elif levelManager.level == 3:
+                levelManager.enemyGroup.add(SecondEnemy(enemyProjectiles))
+                levelManager.generatedEnemies += 1
+            else:
+                choice = random.randint(0, 1)
+                enemy = None
+                if choice == 0:
+                    enemy = Enemy()
+                elif choice == 1:
+                    enemy = SecondEnemy(enemyProjectiles)
+                levelManager.enemyGroup.add(enemy)
+                levelManager.generatedEnemies += 1  
 
         if event.type == KEYDOWN:
             if event.key == K_SPACE:

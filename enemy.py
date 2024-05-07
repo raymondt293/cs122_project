@@ -90,7 +90,6 @@ class Enemy(pygame.sprite.Sprite):
                 itemGroup.add(item)
             
     def render(self, display):
-        pygame.draw.rect(display, (0,0,255), self.rect)
         display.blit(self.image, self.pos)
 
     def update(self, groundGroup, player, projectiles, itemGroup):

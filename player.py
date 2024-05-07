@@ -170,24 +170,8 @@ class Player(pygame.sprite.Sprite):
                 self.vel.y = -3
 
     def render(self, display):
-        pygame.draw.rect(display, (255,0,0), self.rect)
-        pygame.draw.rect(display, (0,255,0), self.attack_range)
         display.blit(self.image, self.pos)
-
-        pygame.draw.rect(display,(255,0,0), pygame.Rect(self.pos.x, self.rect.y - 30, 100*(self.coin/self.maxCoin), 15))
-
-        # Create a surface slightly larger than the character image
-        border_surface = pygame.Surface((self.image.get_width() + 4, self.image.get_height() + 4), pygame.SRCALPHA)
-        
-        # Draw the character image onto the surface
-        border_surface.blit(self.image, (2, 2))
-
-        # Draw border around the character image
-        pygame.draw.rect(border_surface, (255, 255, 255), border_surface.get_rect(), 2)
-
-        # Blit the bordered character image onto the display surface
-        display.blit(border_surface, (self.pos.x - 2, self.pos.y - 2))
-
+        pygame.draw.rect(display, (255, 102, 51), pygame.Rect(self.pos.x, self.rect.y - 30, 100*(self.coin/self.maxCoin), 8))
         self.healthBar.render(display)
 
     def load_animations(self):
@@ -244,8 +228,12 @@ class Player(pygame.sprite.Sprite):
     
     def fireball(self,group):
         if self.coin >=10:
-            fireball=Fireball(self.direction, self.rect.center)
-            group.add(fireball)
+            if self.direction == "RIGHT":
+                fireball=Fireball(self.direction, self.rect.center, "images/fireball2_R.png")
+                group.add(fireball)
+            elif self.direction == "LEFT":
+                fireball=Fireball(self.direction, self.rect.center, "images/fireball2_L.png")
+                group.add(fireball)
             self.coin -= 10
     
     def useCoin(self):

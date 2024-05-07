@@ -127,8 +127,12 @@ class SecondEnemy(pygame.sprite.Sprite):
 
     def attack(self):
         if self.attack_cooldown <= 0:
-            fireball=Fireball(self.direction, self.rect.center)
-            self.projectilesGroup.add(fireball)
+            if self.direction == "RIGHT":
+                fireball=Fireball(self.direction, self.rect.center, "images/fireball1_R.png")
+                self.projectilesGroup.add(fireball)
+            elif self.direction == "LEFT":
+                fireball=Fireball(self.direction, self.rect.center, "images/fireball1_L.png")
+                self.projectilesGroup.add(fireball)
             self.attack_cooldown=300
         else:
             self.attack_cooldown -= 1
