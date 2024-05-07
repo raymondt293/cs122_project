@@ -38,7 +38,11 @@ playerGroup.add(player)
 
 levelManager = LevelManager()
 
+ATTACK_COOLDOWN = 500
+last_attack_time = 0
+
 while True:
+    current_time = pygame.time.get_ticks()
     for event in pygame.event.get():
         if event.type == QUIT:
             pygame.quit()
@@ -60,8 +64,10 @@ while True:
             if event.key == K_SPACE:
                 player.jump()
             if event.key == K_z:
-                player.attacking = True
-                player.attack()
+                if current_time - last_attack_time >= ATTACK_COOLDOWN:
+                    player.attacking = True
+                    player.attack()
+                    last_attack_time = current_time
             if event.key == K_1:
                 levelManager.changeLevel(1)
             if event.key == K_2:

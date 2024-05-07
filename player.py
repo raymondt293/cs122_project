@@ -74,8 +74,10 @@ class Player(pygame.sprite.Sprite):
             self.rect.x -= 10
         
         if not self.jumping and not self.running and not self.attacking:
-            print('idle')
-            self.image = pygame.image.load("images/player_idle/tile000.png")
+            if self.direction == "RIGHT":
+                self.image = pygame.image.load("images/player_idle_right/tile000.png")
+            elif self.direction == "LEFT":
+                self.image = pygame.image.load("images/player_idle_left/tile000.png")
             self.rect.topleft = (self.pos.x - (self.image.get_rect().width - self.rect.width) / 2 + self.rect.width + 5, self.pos.y - (self.image.get_rect().height - self.rect.height) + 30)
 
     def walking(self):
@@ -217,10 +219,15 @@ class Player(pygame.sprite.Sprite):
                           pygame.image.load("images/player_attack_left/tile005.png").convert_alpha(),
                           pygame.image.load("images/player_attack_left/tile006.png").convert_alpha(),
                           pygame.image.load("images/player_attack_left/tile007.png").convert_alpha()]
-        self.idle_animation = [pygame.image.load("images/player_idle/tile000.png").convert_alpha(),
-                          pygame.image.load("images/player_idle/tile001.png").convert_alpha(),
-                          pygame.image.load("images/player_idle/tile002.png").convert_alpha(),
-                          pygame.image.load("images/player_idle/tile003.png").convert_alpha()]
+        self.idle_animation_left = [pygame.image.load("images/player_idle_left/tile000.png").convert_alpha(),
+                          pygame.image.load("images/player_idle_left/tile001.png").convert_alpha(),
+                          pygame.image.load("images/player_idle_left/tile002.png").convert_alpha(),
+                          pygame.image.load("images/player_idle_left/tile003.png").convert_alpha()]
+        
+        self.idle_animation_right = [pygame.image.load("images/player_idle_right/tile000.png").convert_alpha(),
+                          pygame.image.load("images/player_idle_right/tile001.png").convert_alpha(),
+                          pygame.image.load("images/player_idle_right/tile002.png").convert_alpha(),
+                          pygame.image.load("images/player_idle_right/tile003.png").convert_alpha()]
         
     def player_hit(self, damage):
         if self.hit_cooldown == False:
