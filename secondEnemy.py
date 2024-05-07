@@ -21,15 +21,19 @@ class SecondEnemy(pygame.sprite.Sprite):
             self.image = pygame.image.load("images/sprites/Characters/Enemies/sprites/Idle/crab-idle1.png")
             self.direction="LEFT"
 
+        self.move_frame = 0
+        self.move_counter = 0
+
         self.rect = self.image.get_rect()
 
         self.pos = vec(random.randint(0,800),0)
         self.vel = vec(0,0)
         self.acc = vec(0,0)
         self.FRIC = -0.1
-        self.ACC = round(random.uniform(0.3, 0.2), 2)
+        self.ACC = round(random.uniform(0.5, 0.4), 2)
         self.attack_cooldown=300
         self.turn_cooldown=120
+        self.jumping = False
     
     # Enemy life
         self.is_alive = True
@@ -60,6 +64,21 @@ class SecondEnemy(pygame.sprite.Sprite):
 
         self.rect.topleft = self.pos
 
+
+    def update_image_frame(self):
+        if self.move_frame > 6:
+            self.move_frame = 0
+            return
+        
+        if self.vel.x >= 0:
+            self.image = self.animation_right[self.move_frame]
+        elif self.vel.x < 0:
+            self.image = self.animation_left[self.move_frame]
+        self.move_counter += 1
+        if self.move_counter >= 3:
+            self.move_frame = (self.move_frame + 1) % len(self.animation_left)
+            self.move_counter = 0
+
     def collision(self, group):
         hits = pygame.sprite.spritecollide(self, group, False)
 
@@ -70,9 +89,12 @@ class SecondEnemy(pygame.sprite.Sprite):
                     self.pos.y = hit.rect.top - self.rect.height
                     self.rect.y = hit.rect.top - self.rect.height
                     self.vel.y = 0
+                    self.jumping = False
 
     def player_collision(self, player, projectiles, itemGroup):
-        if self.rect.colliderect(player.attack_range) or pygame.sprite.spritecollideany(self,projectiles):
+        if self.rect.colliderect(player.rect):
+            player.player_hit(1)    # Player took damage
+        elif self.rect.colliderect(player.attack_range) or pygame.sprite.spritecollideany(self,projectiles):
             self.kill()     # Mob hit by user
 
             probability = numpy.random.uniform(1, 100)
@@ -88,12 +110,21 @@ class SecondEnemy(pygame.sprite.Sprite):
         display.blit(self.image, self.pos)
 
     def update(self, groundGroup, player, projectiles, itemGroup):
+        self.update_image_frame()
         self.move()
+        #Randomly trigger jumps
+        if random.randint(0,1000) < 200:
+            self.jump()
         self.collision(groundGroup)
         self.player_collision(player, projectiles, itemGroup)
         self.attack()
         self.turn(player)
     
+    def jump(self):
+        if not self.jumping:
+            self.jumping = True
+            self.vel.y = -12
+
     def attack(self):
         if self.attack_cooldown <= 0:
             fireball=Fireball(self.direction, self.rect.center)
