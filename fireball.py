@@ -14,9 +14,22 @@ class Fireball(pygame.sprite.Sprite):
         self.rect=self.image.get_rect(center=position)
     
     def render(self,display):
+        """
+        Render the item on the display surface.
+
+        Parameters:
+        - display (pygame.Surface): The surface to render the item on.
+        """
         display.blit(self.image,self.rect)
 
     def update(self,group):
+        """
+        Updates the collision and position of the fireball
+
+        Args:
+            group: The Sprite group
+
+        """
         hit=pygame.sprite.spritecollideany(self,group)
         if hit:
             self.kill()

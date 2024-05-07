@@ -41,17 +41,35 @@ class LevelManager:
         self.levels.append(L3)
     
     def getLevel(self):
+        """
+        Get the current level index.
+
+        Returns:
+        - int: The current level index.
+        """
         return self.level
     
     def nextLevel(self):
+        """
+        Advance to the next level.
+        """
         self.level+=1
 
     def changeLevel(self, n):
+        """
+        Change to the specified level.
+
+        Parameters:
+        - n (int): The level to change to.
+        """
         self.level=n
         self.generatedEnemies=0
         self.enemyGroup.empty()
         pygame.time.set_timer(self.enemy_generation, 2000)
     
     def update(self):
+        """
+        Update the level manager, controlling enemy generation.
+        """
         if(self.generatedEnemies == self.levels[self.getLevel()].enemyCount):
             pygame.time.set_timer(self.enemy_generation, 0)

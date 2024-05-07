@@ -13,9 +13,18 @@ class Inventory:
         self.slots.append(InventorySlot("images/coin/coin.png", (10, 360)))
 
     def update(self):
+        """
+        Updates slots with player's coin information.
+        """
         self.slots[0].count=self.playerInfo.coins
 
     def render(self, display):
+        """
+        Render the item on the display surface.
+
+        Parameters:
+        - display (pygame.Surface): The surface to render the item on.
+        """
         display.blit(self.image, self.rect) 
         for slot in self.slots:
             slot.render(display)

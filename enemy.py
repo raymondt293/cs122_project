@@ -6,6 +6,9 @@ from item import Item
 vec = pygame.math.Vector2
 
 class Enemy(pygame.sprite.Sprite):
+    '''
+    Initializes an Enemy object.
+    '''
     def __init__(self):
         super().__init__()
 
@@ -32,6 +35,9 @@ class Enemy(pygame.sprite.Sprite):
         self.load_animations()
 
     def move(self):
+        """
+        Updates the position of the enemy based on its velocity and acceleration.
+        """
         self.acc = vec(0, 0.5)
 
         if self.direction == 0:
@@ -51,6 +57,9 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.topleft = self.pos
     
     def update_image_frame(self):
+        """
+        Updates the image frame of the enemy animation.
+        """
         if self.move_frame > 7:
             self.move_frame = 0
             return
@@ -65,6 +74,12 @@ class Enemy(pygame.sprite.Sprite):
             self.move_counter = 0
 
     def collision(self, group):
+        """
+        Handles collision detection with other sprites in the specified group and the ground.
+
+        Args:
+            group: The sprite group to check for collisions.
+        """
         hits = pygame.sprite.spritecollide(self, group, False)
 
         if self.vel.y > 0:
@@ -76,6 +91,14 @@ class Enemy(pygame.sprite.Sprite):
                     self.vel.y = 0
 
     def player_collision(self, player, projectiles, itemGroup):
+        """
+        Handles collision detection with the player sprite and projectiles.
+
+        Args:
+            player: The player sprite.
+            projectiles: The sprite group containing projectiles.
+            itemGroup: The sprite group for items.
+        """
         if self.rect.colliderect(player.rect):
             player.player_hit(1)    # Player took damage
         elif self.rect.colliderect(player.attack_range) or pygame.sprite.spritecollideany(self,projectiles):
@@ -90,9 +113,24 @@ class Enemy(pygame.sprite.Sprite):
                 itemGroup.add(item)
             
     def render(self, display):
+        """
+        Renders the enemy sprite on the display surface.
+
+        Args:
+            display: The pygame display surface.
+        """
         display.blit(self.image, self.pos)
 
     def update(self, groundGroup, player, projectiles, itemGroup):
+        """
+        Updates the enemy sprite.
+
+        Args:
+            groundGroup: The sprite group containing ground objects.
+            player: The player sprite.
+            projectiles: The sprite group containing projectiles.
+            itemGroup: The sprite group for items.
+        """
         if self.is_dying:
             self.update_death_animation()
         else:
@@ -103,6 +141,9 @@ class Enemy(pygame.sprite.Sprite):
         
 
     def update_death_animation(self):
+        """
+        Updates the death animation of the enemy.
+        """
         if self.death_frame < len(self.animation_dead) - 1:
             self.image = self.animation_dead[self.death_frame]
             self.death_frame_counter += 1
@@ -115,6 +156,9 @@ class Enemy(pygame.sprite.Sprite):
             self.kill()
 
     def load_animations(self):
+        """
+        Loads the animations for the enemy sprite.
+        """
         self.animation_left = [pygame.image.load("images/mob_snail_left/tile000.png").convert_alpha(),
                                pygame.image.load("images/mob_snail_left/tile001.png").convert_alpha(),
                                pygame.image.load("images/mob_snail_left/tile002.png").convert_alpha(),

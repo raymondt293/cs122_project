@@ -3,6 +3,9 @@ vec = pygame.math.Vector2
 
 class Ground(pygame.sprite.Sprite):
     def __init__(self, width, height, x, y, color=None, image=None):
+        '''
+        Initializes a Ground object (image or rectangle)
+        '''
         super().__init__()
 
         self.size = vec(width, height)
@@ -21,6 +24,12 @@ class Ground(pygame.sprite.Sprite):
 
 
     def render(self, display):
+        """
+        Render the item on the display surface.
+
+        Parameters:
+        - display (pygame.Surface): The surface to render the item on.
+        """
         if self.image is None:
             pygame.draw.rect(display, self.color, self.rect)
         else:

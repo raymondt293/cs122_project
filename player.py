@@ -7,6 +7,13 @@ vec = pygame.math.Vector2
 
 class Player(pygame.sprite.Sprite):
     def __init__(self, x, y):
+        '''
+        Initialize the Player object.
+
+        Args:
+            x (int): Initial x-coordinate of the player.
+            y (int): Initial y-coordinate of the player.
+        '''
         super().__init__()
         self.image = pygame.image.load("images/player_running_right/tile000.png")
         self.rect = pygame.Rect(x, y, 30, 60)
@@ -45,6 +52,7 @@ class Player(pygame.sprite.Sprite):
         self.load_animations()
 
     def move(self):
+        """Update player's movement."""
         self.acc = vec(0, 0.5)
 
         if abs(self.vel.x) > 0.3:
@@ -82,6 +90,7 @@ class Player(pygame.sprite.Sprite):
             self.rect.topleft = (self.pos.x - (self.image.get_rect().width - self.rect.width) / 2 + self.rect.width + 5, self.pos.y - (self.image.get_rect().height - self.rect.height) + 30)
 
     def walking(self):
+        """Update player's walking animation."""
         if self.move_frame > 7:
             self.move_frame = 0
             return
@@ -106,6 +115,7 @@ class Player(pygame.sprite.Sprite):
                 self.image = self.animation_left[self.move_frame]
 
     def attack(self):
+        """Update player's attack animation."""
         if self.attacking == True:
             if self.direction == "RIGHT":
                 self.attack_range = pygame.Rect(self.rect.x + self.rect.width, self.pos.y, 30, self.rect.height)
@@ -129,6 +139,7 @@ class Player(pygame.sprite.Sprite):
                 self.attack_counter = 0
 
     def collision(self, group):
+        """Handle collision with group and ground."""
         hits = pygame.sprite.spritecollide(self, group, False)
 
         if self.vel.y > 0:
@@ -141,6 +152,7 @@ class Player(pygame.sprite.Sprite):
                     self.jumping = False
 
     def update(self, group, enProjectiles):
+        """Update player's position and interactions."""
         if(self.healthBar.health <= 0):
             self.is_alive = False
             self.healthBar.health = 0
@@ -154,27 +166,32 @@ class Player(pygame.sprite.Sprite):
             self.checkProjectiles(enProjectiles)
 
     def checkProjectiles(self, group):
+        """Check for collisions with enemy projectiles."""
         hits = pygame.sprite.spritecollideany(self, group)
 
         if hits:
             self.player_hit(1)
 
     def jump(self):
+        """Make the player jump."""
         if self.jumping == False:
             self.jumping = True
             self.vel.y = -12
 
     def jump_cancel(self):
+        """Cancel player's jump."""
         if self.jumping:
             if self.vel.y < -3: # Player is mid way through his jump
                 self.vel.y = -3
 
     def render(self, display):
+        """Render the player on the display surface."""
         display.blit(self.image, self.pos)
         pygame.draw.rect(display, (255, 102, 51), pygame.Rect(self.pos.x, self.rect.y - 30, 100*(self.coin/self.maxCoin), 8))
         self.healthBar.render(display)
 
     def load_animations(self):
+        """Load player's animations."""
         self.animation_right = [pygame.image.load("images/player_running_right/tile000.png").convert_alpha(),
                    pygame.image.load("images/player_running_right/tile001.png").convert_alpha(),
                    pygame.image.load("images/player_running_right/tile002.png").convert_alpha(),
@@ -221,12 +238,14 @@ class Player(pygame.sprite.Sprite):
                           pygame.image.load("images/player_idle_right/tile003.png").convert_alpha()]
         
     def player_hit(self, damage):
+        """Handle player's hit."""
         if self.hit_cooldown == False:
             self.hit_cooldown = True
             self.healthBar.takeDamage(damage)
             pygame.time.set_timer(self.hit_cooldown_event, 1000)
     
     def fireball(self,group):
+        """Launch a fireball."""
         if self.coin >=10:
             if self.direction == "RIGHT":
                 fireball=Fireball(self.direction, self.rect.center, "images/fireball2_R.png")
@@ -237,6 +256,7 @@ class Player(pygame.sprite.Sprite):
             self.coin -= 10
     
     def useCoin(self):
+        """Use coins."""
         if self.coin == self.maxCoin:
            return
         if self.coins >= 2:
